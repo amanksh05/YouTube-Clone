@@ -1,64 +1,75 @@
-import axios from "axios";
+import axios from 'axios';
+import React from 'react';
+import { parseVideoDuration } from './parseVideoDuration';
+import { convertRawtoString } from './convertRawToString';
+import { timeSince } from './timeSince';
+
+const API_KEY = import.meta.env.VITE_API_KEY;
+
 export const parseData = async (items) => {
+
   try {
-    const videosIds = [];
-    const channelsIds = [];
+    const videoIds = [];
+    const channelIds = [];
 
     items.forEach((item) => {
-      channelsIds.push(item.snippet.channelId);
-      videosIds.push(item.id.videoId);
+      channelIds.push(item.snippet.channelId);
+      videoIds.push(item.id.videoId);
     });
 
     const {
-      data: { item: channelsData },
-    } = await axios.get(`https://youtube.googleapis.com/youtube/v3/channels?part=snippet.contentDetails&id=${channelsIds},&key=AIzaSyBnOQFud1-A_FeZ-a3mL1aGhiyjlO_C1ws&&type=video`);
+      data: { items: channelsData },
+    } = await axios.get(`https://youtube.googleapis.com/youtube/v3/channels?part=snippet,contentDetails&id=${channelIds.join(
+      ","
+    )}&key=${API_KEY}`);
 
-    const parsedChannelData = [];
 
-    channelsData.forEach((channel) => parsedChannelData.push({
+
+    const parsedChannelsData = [];
+    channelsData.forEach((channel) => parsedChannelsData.push({
       id: channel.id,
       image: channel.snippet.thumbnails.default.url,
     }));
 
     const {
-      data: { items: videoData },
-    } = await axios.get(`https://youtube.googleapis.com/youtube/v3/videos?part=contenDetails,statistics&id=${videosIds.join(",")}&key=AIzaSyBnOQFud1-A_FeZ-a3mL1aGhiyjlO_C1ws`);
-    
-    const parseData = [];
+      data: { items: videosData },
+    } = await axios.get(
+      `https://youtube.googleapis.com/youtube/v3/videos?part=contentDetails,statistics&id=${videoIds.join(
+        ","
+      )}&key=${API_KEY}`
+    );
 
-    items.forEach((item,index)=>{
-      const{image:channelImage  
-      } = parsedChannelData.find((data)=>data.id===item.snippet.channelId);
-      if(channelImage){
+
+    const parseData = [];
+    items.forEach((item, index) => {
+      const { image: channelImage
+      } = parsedChannelsData.find((data) => data.id === item.snippet.channelId);
+      if (channelImage) {
         parseData.push({
-          videoId: item.id.videoData,
+          videoId: item.id.videoId,
           videoTitle: item.snippet.title,
           videoDescription: item.snippet.description,
-          videoThumbnail:item.snippet.thumbnails.medium.url,
-          VideoLink:`https://www.youtube.com/watch?v=${item.id.videoId}`,
+          videoThumbnail: item.snippet.thumbnails.medium.url,
+          videoLink: `https://www.youtube.com/watch?v=${item.id.videoId}`,
           videoDuration: parseVideoDuration(
-            videoData[index].contentDetails.duration
+            videosData[index].contentDetails.duration
           ),
           videoViews: convertRawtoString(
-            videoData[index].statistics.viewCount
+            videosData[index].statistics.viewCount
           ),
-          videoAge:timeSince(new Data(item.snippet.publishedAt)),
-          channelInfo:{
-            id:item.snippet.channelId,
-            image:channelImage,
-            name:item.snippet.channelTitle
+          videoAge: timeSince(new Date(item.snippet.publishedAt)
+          ),
+          channelInfo: {
+            id: item.snippet.channelId,
+            image: channelImage,
+            name: item.snippet.channelTitle
           },
         });
       }
-    })
-  return parseData
+    });
+    return parseData;
   }
-  catch(err) {
-    console.log(err)
-   }
-
-  // console.log(items)
-  // return (
-  //   hi
-  // )
-}
+  catch (err) {
+    console.log(err);
+  }
+};
