@@ -15,8 +15,8 @@ function Sidebar() {
     { icon: <MdWatchLater className='text-2xl' />, name: 'Watch Later' }
   ];
   return (
-    <div className='w-2/12 min-w-[200px] bg-[#212121] pr-5 overflow-auto pb-8 h-screen hidden sm:block'>
-      <ul className='flex flex-col border-b-2 border-gray-700 pl-3 pb-3'>
+    <div className='w-1/12 min-w-[200px] bg-[#212121] pr-5 overflow-auto pb-8 h-screen hidden sm:block'>
+      <ul className='flex flex-col border-b-2 gap-1 border-gray-700 pl-3 pb-3'>
         {
           mainLinks.map(({ icon, name }) => (
             <li key={name} className={`pl-3 py-3 rounded-md hover:bg-zinc-600  ${name === "Home" ? "bg-slate-600" : ""}`}>
