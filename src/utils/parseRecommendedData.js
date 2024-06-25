@@ -1,12 +1,11 @@
 import axios from 'axios';
-import React from 'react';
 import { parseVideoDuration } from './parseVideoDuration';
 import { convertRawToString } from './convertRawToString';
 import { timeSince } from './timeSince';
 
-const API_KEY = import.meta.env.VITE_API_KEY;
+const API_KEY = import.meta.env.API_KEY;
 
-export const parseData = async (items) => {
+export const parseRecommendedData = async (items) => {
 
   try {
     const videoIds = [];

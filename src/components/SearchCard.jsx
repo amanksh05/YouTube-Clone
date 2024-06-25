@@ -1,4 +1,5 @@
 import React from 'react'
+import { Link } from 'react-router-dom'
 
 function SearchCard({ data }) {
     return (
@@ -7,7 +8,9 @@ function SearchCard({ data }) {
                 <span className='absolute bottom-2 right-2 text-sm bg-gray-900 px-2 py-0.5 z-10 rounded-lg'>
                     {data.videoDuration}
                 </span>
-                <img src={data.videoThumbnail} alt='Thumbnail' className='h-52 w-96 rounded-md' />
+                <Link to = {`/watch/${data.videoId}`}>
+                    <img src={data.videoThumbnail} alt='Thumbnail' className='h-52 w-96 rounded-md' />
+                </Link>
             </div>
             <div className='flex flex-col gap-1'>
                 <h3 className='max-w-2xl'>
